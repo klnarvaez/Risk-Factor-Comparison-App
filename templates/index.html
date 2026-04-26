@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Factor Comparison App</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>Risk Factor Comparison App</h1>
+            <p class="subtitle">Quickly add companies, compare risk data, and manage your company access.</p>
+        </div>
+        <div class="user-info">
+            <p>Welcome, <a href="/profile" class="profile-name-link">{{ first_name }}</a>!</p>
+            <div class="top-actions">
+                {% if show_admin_button %}
+                <a href="/admin/dashboard" class="admin-btn">Administrator Tools</a>
+                {% endif %}
+                <form method="post" style="display: inline-block; margin: 0;">
+                    <button type="submit" name="action" value="logout" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <h2>Add Companies</h2>
+            <p>Add up to 5 companies at once. New companies are created automatically with risk details.</p>
+            <form method="post" class="dashboard-form">
+                <input type="text" name="companies" placeholder="Company names, comma separated" required>
+                <button type="submit" name="action" value="add">Add Companies</button>
+            </form>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>List Companies</h2>
+            <p>View the companies currently linked to your account.</p>
+            <form method="post" class="dashboard-actions">
+                <button type="submit" name="action" value="list">List Companies</button>
+            </form>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Show Company Risks</h2>
+            <p>Compare risk categories across your associated companies.</p>
+            <form method="post" class="dashboard-actions">
+                <button type="submit" name="action" value="show">Show Risks</button>
+            </form>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Manage Companies</h2>
+            <p>Review your saved companies and remove access directly from a dedicated management page.</p>
+            <a href="/manage/companies" class="button manage-btn">Go to Manage Companies</a>
+        </div>
+    </div>
+
+    <div id="results">
+        {% if message %}
+        <div class="result-message">{{ message | safe }}</div>
+        {% endif %}
+        {% if companies_list %}
+        <div class="result-section">
+            <h2>Your Companies</h2>
+            <ul>
+            {% for company in companies_list %}
+            <li><strong>{{ company.name }}</strong>: {{ company.counts }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% if risks_data %}
+        <div class="result-section">
+            <h2>Risk Comparison</h2>
+            <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>Company</th>
+                    {% for cat in categories %}
+                    <th>{{ cat }}</th>
+                    {% endfor %}
+                </tr>
+                {% for company in risks_data %}
+                <tr class="table-row">
+                    <td><strong>{{ company.name }}</strong></td>
+                    {% for cat in categories %}
+                    <td>
+                        {% if company.risks[cat] %}
+                        {% for risk in company.risks[cat][:3] %}
+                        {{ loop.index }}. {{ risk }}<br>
+                        {% endfor %}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

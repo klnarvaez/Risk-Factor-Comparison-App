@@ -1,0 +1,153 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Risk Management - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-filters {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter-group select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.95em;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .admin-table th {
+        background-color: #333;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .admin-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .admin-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .category-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 0.85em;
+        font-weight: bold;
+    }
+
+    .category-Strategic { background-color: #e3f2fd; color: #1565c0; }
+    .category-Financial { background-color: #fff3e0; color: #e65100; }
+    .category-Legal { background-color: #f3e5f5; color: #7b1fa2; }
+    .category-Operational { background-color: #e8f5e9; color: #2e7d32; }
+    .category-Technology { background-color: #ede7f6; color: #512da8; }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .stat-card .stat-number {
+        font-size: 2em;
+        font-weight: bold;
+        color: #ff6600;
+    }
+
+    .stat-card .stat-label {
+        color: #666;
+        margin-top: 5px;
+        font-size: 0.9em;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Risk Management</h2>
+
+{% if risks %}
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-number">{{ risks|length }}</div>
+        <div class="stat-label">Total Risks</div>
+    </div>
+    {% set categories_count = {} %}
+    {% for risk in risks %}
+        {% if risk.category not in categories_count %}
+            {% set _ = categories_count.update({risk.category: 0}) %}
+        {% endif %}
+        {% set _ = categories_count.update({risk.category: categories_count[risk.category] + 1}) %}
+    {% endfor %}
+    {% for cat in ['Strategic', 'Financial', 'Legal', 'Operational', 'Technology'] %}
+        {% if cat in categories_count %}
+        <div class="stat-card">
+            <div class="stat-number">{{ categories_count[cat] }}</div>
+            <div class="stat-label">{{ cat }}</div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>Company</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for risk in risks %}
+        <tr>
+            <td>{{ companies_map.get(risk.company_id, 'Unknown') }}</td>
+            <td><span class="category-badge category-{{ risk.category }}">{{ risk.category }}</span></td>
+            <td style="max-width: 300px; word-wrap: break-word;">{{ risk.description[:100] }}{% if risk.description|length > 100 %}...{% endif %}</td>
+            <td>{{ risk.created_at.strftime('%Y-%m-%d %H:%M') if risk.created_at else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-message">
+    <p>No risks found.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin Dashboard - Risk Factor Comparison App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .dashboard-card {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-align: center;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .dashboard-card-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+    }
+
+    .dashboard-card-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-card-desc {
+        font-size: 0.9em;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .dashboard-card:hover .dashboard-card-title {
+        color: #ff6600;
+    }
+
+    .dashboard-welcome {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-welcome h2 {
+        color: #ff6600;
+        margin-top: 0;
+    }
+
+    .dashboard-welcome p {
+        color: #666;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-welcome">
+    <h2>Welcome to Admin Dashboard</h2>
+    <p>Manage users, companies, risks, and their associations. Click on any card below to access the management interface.</p>
+</div>
+
+<div class="dashboard-container">
+    <a href="{{ url_for('admin_users') }}" class="dashboard-card">
+        <div class="dashboard-card-icon">👥</div>
+        <div class="dashboard-card-title">Users</div>
+        <div class="dashboard-card-desc">Manage user accounts, view details, and merge duplicate users.</div>
+    </a>
+
+    <a href="{{ url_for('admin_companies') }}" class="dashboard-card">
+        <div class="dashboard-card-icon">🏢</div>
+        <div class="dashboard-card-title">Companies</div>
+        <div class="dashboard-card-desc">Add, edit, and delete company records.</div>
+    </a>
+
+    <a href="{{ url_for('admin_risks') }}" class="dashboard-card">
+        <div class="dashboard-card-icon">⚠️</div>
+        <div class="dashboard-card-title">Risks</div>
+        <div class="dashboard-card-desc">View and manage risk items across all companies.</div>
+    </a>
+
+    <a href="{{ url_for('admin_associations') }}" class="dashboard-card">
+        <div class="dashboard-card-icon">🔗</div>
+        <div class="dashboard-card-title">Associations</div>
+        <div class="dashboard-card-desc">Manage user-company relationships and access permissions.</div>
+    </a>
+</div>
+{% endblock %}

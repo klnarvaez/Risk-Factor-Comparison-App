@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Risk Factor Comparison App</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+        
+        .profile-header h1 {
+            margin: 0;
+            color: #0066cc;
+        }
+        
+        .back-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .profile-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #0066cc;
+        }
+        
+        .profile-section h2 {
+            color: #0066cc;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 5px rgba(0,102,204,0.3);
+        }
+        
+        .password-requirements {
+            background-color: #e6f2ff;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #0066cc;
+            margin-top: 5px;
+        }
+        
+        .password-requirements ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        
+        .password-requirements li {
+            margin: 3px 0;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background-color: #0066cc;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background-color: #004499;
+        }
+        
+        .btn-danger {
+            background-color: #cc3333;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #990000;
+        }
+        
+        .btn-secondary {
+            background-color: #666;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #444;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .message.show {
+            display: block;
+        }
+        
+        .message.success {
+            background-color: #e6ffe6;
+            color: #006600;
+            border-left: 4px solid #006600;
+        }
+        
+        .message.error {
+            background-color: #ffe6e6;
+            color: #cc3333;
+            border-left: 4px solid #cc3333;
+        }
+        
+        .message.warning {
+            background-color: #fff9e6;
+            color: #996600;
+            border-left: 4px solid #996600;
+        }
+        
+        .companies-section {
+            margin-top: 20px;
+        }
+        
+        .company-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        
+        .company-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .company-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .delete-company-btn {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .delete-company-btn:hover {
+            background-color: #cc0000;
+        }
+        
+        .no-companies {
+            color: #999;
+            font-style: italic;
+            padding: 10px;
+        }
+        
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .confirm-modal.show {
+            display: flex;
+        }
+        
+        .confirm-modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .confirm-modal-content h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        
+        .confirm-modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .confirm-modal-buttons button {
+            padding: 8px 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Risk Factor Comparison App</h1>
+        <div class="user-info">
+            <p>User Profile</p>
+            <a href="/" class="back-link">← Back to Dashboard</a>
+            <form method="post" style="margin: 0;">
+                <button type="submit" name="action" value="logout" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        {% if message %}
+            <div class="message show {% if message_type %}{{ message_type }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        <!-- Personal Information Section -->
+        <div class="profile-section">
+            <h2>Personal Information</h2>
+            <form method="post" action="/profile">
+                <input type="hidden" name="action" value="update_info">
+                
+                <div class="form-group">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required minlength="1" maxlength="50">
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required minlength="1" maxlength="50">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Update Personal Information</button>
+            </form>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="profile-section">
+            <h2>Change Password</h2>
+            <form method="post" action="/profile">
+                <input type="hidden" name="action" value="change_password">
+                
+                <div class="form-group">
+                    <label for="current_password">Current Password:</label>
+                    <input type="password" id="current_password" name="current_password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new_password">New Password:</label>
+                    <input type="password" id="new_password" name="new_password" required minlength="8">
+                    <div class="password-requirements">
+                        <strong>Password Requirements:</strong>
+                        <ul>
+                            <li>At least 8 characters long</li>
+                            <li>At least one uppercase letter</li>
+                            <li>At least one lowercase letter</li>
+                            <li>At least one number</li>
+                            <li>At least one special character (!@#$%^&*)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required minlength="8">
+                </div>
+                
+                <button type="submit" class="btn-primary">Change Password</button>
+            </form>
+        </div>
+
+        <!-- Manage Companies Section -->
+        <div class="profile-section">
+            <h2>Your Companies</h2>
+            <p>Manage your company associations here, or use the dedicated management page for a cleaner experience.</p>
+            <a href="/manage/companies" class="btn-secondary" style="display: inline-block; margin-bottom: 15px;">Go to Manage Companies</a>
+            {% if companies %}
+                <p>Click the delete button to remove a company from your account. This does not delete the company from the system.</p>
+                <ul class="company-list">
+                {% for company in companies %}
+                    <li class="company-item">
+                        <span class="company-name">{{ company.name }}</span>
+                        <button type="button" class="delete-company-btn" onclick="confirmDeleteCompany({{ company.company_id }}, '{{ company.name }}')">
+                            Remove
+                        </button>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-companies">You haven't added any companies yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- API Key Section -->
+        <div class="profile-section">
+            <h2>API Access</h2>
+            <p>Use your API key to access the application's REST API endpoints programmatically.</p>
+            
+            {% if user.api_key %}
+                <div class="form-group">
+                    <label for="api_key">Your API Key:</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="api_key" value="{{ user.api_key }}" readonly style="flex: 1; background-color: #f5f5f5;">
+                        <button type="button" class="btn-secondary" onclick="copyApiKey()">Copy</button>
+                    </div>
+                    <p style="color: #666; font-size: 12px; margin-top: 5px;">
+                        Keep this key secure! It provides full access to your account data.
+                    </p>
+                </div>
+                <form method="post" action="/profile" style="display: inline;">
+                    <input type="hidden" name="action" value="delete_api_key">
+                    <button type="submit" class="btn-danger" onclick="return confirm('Are you sure you want to delete your API key? This will revoke all API access.')">
+                        Delete API Key
+                    </button>
+                </form>
+            {% else %}
+                <p style="color: #666; margin-bottom: 15px;">You don't have an API key yet.</p>
+                <form method="post" action="/profile">
+                    <input type="hidden" name="action" value="generate_api_key">
+                    <button type="submit" class="btn-primary">Generate API Key</button>
+                </form>
+            {% endif %}
+            
+            <div style="margin-top: 15px; padding: 10px; background-color: #f0f8ff; border-radius: 4px;">
+                <h4 style="margin: 0 0 10px 0; color: #0066cc;">API Documentation</h4>
+                <p style="margin: 5px 0; font-size: 13px;">
+                    <strong>Base URL:</strong> <code>{{ request.host_url }}api/v1</code>
+                </p>
+                <p style="margin: 5px 0; font-size: 13px;">
+                    <strong>Authentication:</strong> Include your API key in the <code>Authorization</code> header: <code>Authorization: Bearer YOUR_API_KEY</code>
+                </p>
+                <p style="margin: 5px 0; font-size: 13px;">
+                    <strong>Endpoints:</strong> GET /companies, GET /companies/risks, DELETE /companies/&lt;name&gt;, POST /companies
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="confirm-modal">
+        <div class="confirm-modal-content">
+            <h3>Confirm Removal</h3>
+            <p>Are you sure you want to remove <strong><span id="companyNameDisplay"></span></strong> from your account?</p>
+            <p style="color: #999; font-size: 12px;">This action cannot be undone.</p>
+            <div class="confirm-modal-buttons">
+                <button class="btn-secondary" onclick="cancelDeleteCompany()">Cancel</button>
+                <button class="btn-danger" onclick="confirmDeleteCompanyAction()">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let deleteCompanyId = null;
+        
+        function confirmDeleteCompany(companyId, companyName) {
+            deleteCompanyId = companyId;
+            document.getElementById('companyNameDisplay').textContent = companyName;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+        
+        function cancelDeleteCompany() {
+            deleteCompanyId = null;
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+        
+        function confirmDeleteCompanyAction() {
+            if (deleteCompanyId === null) return;
+            
+            // Submit form to delete the company
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/profile';
+            
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'delete_company';
+            
+            const companyInput = document.createElement('input');
+            companyInput.type = 'hidden';
+            companyInput.name = 'company_id';
+            companyInput.value = deleteCompanyId;
+            
+            form.appendChild(actionInput);
+            form.appendChild(companyInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+        
+        function copyApiKey() {
+            const apiKeyInput = document.getElementById('api_key');
+            apiKeyInput.select();
+            apiKeyInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                document.execCommand('copy');
+                // Show temporary success message
+                const originalText = apiKeyInput.value;
+                apiKeyInput.value = 'Copied!';
+                apiKeyInput.style.backgroundColor = '#e6ffe6';
+                setTimeout(() => {
+                    apiKeyInput.value = originalText;
+                    apiKeyInput.style.backgroundColor = '#f5f5f5';
+                }, 1000);
+            } catch (err) {
+                alert('Failed to copy API key. Please copy it manually.');
+            }
+        }
+    </script>
+</body>
+</html>

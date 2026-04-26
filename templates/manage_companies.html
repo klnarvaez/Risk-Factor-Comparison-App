@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Companies - Risk Factor Comparison App</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .manage-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .manage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .manage-header h1 {
+            margin: 0;
+            color: #0066cc;
+        }
+        .manage-actions, .top-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn-secondary {
+            padding: 10px 16px;
+            border-radius: 6px;
+            background-color: #666;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-secondary:hover {
+            background-color: #444;
+        }
+        .message {
+            padding: 14px 18px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .message.success {
+            background-color: #e6ffe6;
+            color: #006600;
+            border-left: 4px solid #006600;
+        }
+        .message.error {
+            background-color: #ffe6e6;
+            color: #cc3333;
+            border-left: 4px solid #cc3333;
+        }
+        .message.warning {
+            background-color: #fff9e6;
+            color: #996600;
+            border-left: 4px solid #996600;
+        }
+        .delete-company-btn {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .delete-company-btn:hover {
+            background-color: #cc0000;
+        }
+        .no-companies {
+            color: #999;
+            font-style: italic;
+            padding: 10px 0;
+        }
+        .company-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .company-table th,
+        .company-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: left;
+        }
+        .company-table th {
+            background-color: #f2f7ff;
+            color: #004499;
+        }
+        .company-row:nth-child(even) {
+            background-color: #f9fbff;
+        }
+        .manage-note {
+            margin-top: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Risk Factor Comparison App</h1>
+        <div class="user-info">
+            <p>Manage Companies</p>
+            <div class="top-actions">
+                <a href="/" class="dashboard-btn">Back to Dashboard</a>
+                <a href="/profile" class="btn-secondary">Back to Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="manage-container">
+        {% if message %}
+            <div class="message show {% if message_type %}{{ message_type }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        <div class="manage-header">
+            <div>
+                <h1>Your Company Access</h1>
+                <p class="manage-note">Remove company access from your account without deleting the company from the system.</p>
+            </div>
+        </div>
+
+        {% if companies %}
+            <table class="company-table">
+                <thead>
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for company in companies %}
+                    <tr class="company-row">
+                        <td>{{ company.name }}</td>
+                        <td>
+                            <form method="post" style="display: inline;">
+                                <input type="hidden" name="action" value="delete_company">
+                                <input type="hidden" name="company_id" value="{{ company.company_id }}">
+                                <button type="submit" class="delete-company-btn" onclick="return confirm('Remove {{ company.name }} from your account?');">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-companies">You don't have any companies linked to your account yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

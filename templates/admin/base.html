@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Tools - Risk Factor Comparison App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .admin-navbar {
+            background-color: #333;
+            color: white;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .admin-navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .admin-navbar h1 {
+            margin: 0;
+            font-size: 1.8em;
+            color: #ff6600;
+        }
+
+        .admin-navbar-nav {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-navbar-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .admin-navbar-nav a:hover {
+            background-color: #555;
+        }
+
+        .admin-navbar-nav a.active {
+            background-color: #ff6600;
+        }
+
+        .admin-navbar-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .admin-navbar button, .admin-navbar a {
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            font-size: 0.95em;
+        }
+
+        .admin-navbar button:hover, .admin-navbar a:hover {
+            background-color: #e55a00;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .admin-breadcrumb {
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .admin-breadcrumb a {
+            color: #ff6600;
+            text-decoration: none;
+        }
+
+        .admin-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="admin-navbar">
+        <div class="admin-navbar-left">
+            <h1>⚙️ Admin Tools</h1>
+            <ul class="admin-navbar-nav">
+                <li><a href="{{ url_for('admin_dashboard') }}" {% if request.endpoint == 'admin_dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+                <li><a href="{{ url_for('admin_users') }}" {% if request.endpoint == 'admin_users' or 'admin_user' in request.endpoint %}class="active"{% endif %}>Users</a></li>
+                <li><a href="{{ url_for('admin_companies') }}" {% if request.endpoint == 'admin_companies' or 'admin_company' in request.endpoint %}class="active"{% endif %}>Companies</a></li>
+                <li><a href="{{ url_for('admin_risks') }}" {% if request.endpoint == 'admin_risks' %}class="active"{% endif %}>Risks</a></li>
+                <li><a href="{{ url_for('admin_associations') }}" {% if request.endpoint == 'admin_associations' %}class="active"{% endif %}>Associations</a></li>
+            </ul>
+        </div>
+        <div class="admin-navbar-right">
+            <a href="{{ url_for('index') }}" title="Back to Main App">← Main App</a>
+            <form method="POST" action="{{ url_for('index') }}" style="margin: 0;">
+                <input type="hidden" name="action" value="logout">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        {% if message %}
+        <div class="message success">{{ message }}</div>
+        {% endif %}
+
+        {% if merge_message %}
+        <div class="message {% if 'failed' in merge_message.lower() or 'error' in merge_message.lower() %}error{% else %}success{% endif %}">{{ merge_message }}</div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

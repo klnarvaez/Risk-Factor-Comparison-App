@@ -1,0 +1,122 @@
+{% extends "admin/base.html" %}
+
+{% block title %}User-Company Associations - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .admin-table th {
+        background-color: #333;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .admin-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .admin-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .stat-card .stat-number {
+        font-size: 2em;
+        font-weight: bold;
+        color: #ff6600;
+    }
+
+    .stat-card .stat-label {
+        color: #666;
+        margin-top: 5px;
+        font-size: 0.9em;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>User-Company Associations</h2>
+
+{% if associations %}
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-number">{{ associations|length }}</div>
+        <div class="stat-label">Total Associations</div>
+    </div>
+    {% set unique_users = {} %}
+    {% set unique_companies = {} %}
+    {% for assoc in associations %}
+        {% set _ = unique_users.update({assoc.user_id: True}) %}
+        {% set _ = unique_companies.update({assoc.company_id: True}) %}
+    {% endfor %}
+    <div class="stat-card">
+        <div class="stat-number">{{ unique_users|length }}</div>
+        <div class="stat-label">Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ unique_companies|length }}</div>
+        <div class="stat-label">Companies</div>
+    </div>
+</div>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Company</th>
+            <th>Added On</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for assoc in associations %}
+        <tr>
+            <td>
+                <a href="{{ url_for('admin_user_detail', user_key=assoc.user.user_id) }}">
+                    {{ users_map.get(assoc.user_id, 'Unknown User') }}
+                </a>
+            </td>
+            <td>
+                <a href="{{ url_for('admin_company_detail', company_id=assoc.company_id) }}">
+                    {{ companies_map.get(assoc.company_id, 'Unknown Company') }}
+                </a>
+            </td>
+            <td>{{ assoc.added_at.strftime('%Y-%m-%d %H:%M') if assoc.added_at else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-message">
+    <p>No user-company associations found.</p>
+</div>
+{% endif %}
+{% endblock %}

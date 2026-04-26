@@ -1,0 +1,200 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Company Management - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-actions {
+        margin-bottom: 20px;
+    }
+
+    .add-form {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        max-width: 400px;
+    }
+
+    .add-form .form-group {
+        margin-bottom: 15px;
+    }
+
+    .add-form label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .add-form input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.95em;
+        box-sizing: border-box;
+    }
+
+    .add-form input:focus {
+        outline: none;
+        border-color: #ff6600;
+        box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .admin-table th {
+        background-color: #333;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .admin-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .admin-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .admin-table a {
+        color: #ff6600;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+    .admin-table a:hover {
+        text-decoration: underline;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: 0.95em;
+    }
+
+    .btn-primary {
+        background-color: #ff6600;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #e55a00;
+    }
+    .btn-danger {
+        background-color: #cc3333;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #aa2222;
+    }
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.8em;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .stat-card .stat-number {
+        font-size: 2em;
+        font-weight: bold;
+        color: #ff6600;
+    }
+
+    .stat-card .stat-label {
+        color: #666;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Company Management</h2>
+
+{% if companies %}
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-number">{{ companies|length }}</div>
+        <div class="stat-label">Total Companies</div>
+    </div>
+</div>
+{% endif %}
+
+<div class="add-form">
+    <h3>Add New Company</h3>
+    <form method="POST" action="{{ url_for('admin_add_company') }}">
+        <div class="form-group">
+            <label for="name">Company Name:</label>
+            <input type="text" id="name" name="name" required placeholder="Enter company name">
+        </div>
+        <button type="submit" class="btn btn-primary">Add Company</button>
+    </form>
+</div>
+
+{% if companies %}
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>Company Name</th>
+            <th>Risks</th>
+            <th>Users</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for company in companies %}
+        <tr>
+            <td>{{ company.name }}</td>
+            <td>
+                {% set risk_count = company.risks|length %}
+                {{ risk_count }}
+            </td>
+            <td>
+                {% set user_count = company.users|length %}
+                {{ user_count }}
+            </td>
+            <td>{{ company.created_at.strftime('%Y-%m-%d %H:%M') if company.created_at else 'N/A' }}</td>
+            <td>
+                <a href="{{ url_for('admin_company_detail', company_id=company.id) }}">View</a>
+                <a href="{{ url_for('admin_company_detail', company_id=company.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin_company_detail', company_id=company.id) }}" style="display: inline; margin-left: 10px;" onsubmit="return confirm('Are you sure you want to delete this company? This action cannot be undone.')">
+                    <input type="hidden" name="action" value="delete">
+                    <button type="submit" class="btn btn-danger btn-sm" style="padding: 4px 8px; font-size: 0.8em;">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No companies found.</p>
+{% endif %}
+{% endblock %}
